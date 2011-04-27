@@ -1,0 +1,24 @@
+<html>
+<head>
+	<title>Test page</title>
+	<script type="text/javascript" src="swfobject.js"></script>
+	
+	<script type="text/javascript">
+	var flashvars = {
+		DEBUG:false,
+		rtmfpUrl:'rtmfp://p2p.rtmfp.net/f305c7dae01d5c4767797222-af55b81ce685',
+		domain:'*'};
+	
+	swfobject.embedSWF("bin/rtmfp.swf","rtmfpSwf", "0", "0", "10.0.0","expressInstall.swf",flashvars);
+	</script>
+</head>
+<body>
+
+<a href="bin/rtmfp.swf">Reload</a>
+
+<div id="rtmfpSwf">
+  <p>Could not load swf</p>
+</div>
+
+</body>
+</html>
