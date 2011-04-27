@@ -40,11 +40,11 @@ package com.h3xstream.rtmfp
 				if (params['domain'] !== undefined)
 					domain = params['domain'];
 				
-				log("rtmfp version 1.0");
+				log("rtmfp-api version 1.0");
 				
 				Security.allowDomain(domain);
 				initCallbacks();
-				initRTMFP(rtmfpUrl); //TODO:Take the url from init-param
+				initRTMFP(rtmfpUrl);
 			}
 			catch (e:Error) {
 				error('Could not initialise flash app.',e);
@@ -64,28 +64,32 @@ package com.h3xstream.rtmfp
 		}
 		
 		private function listen():void {
-			log("3.1");
 			this.sendStream = new NetStream(nc, NetStream.DIRECT_CONNECTIONS);
 			this.sendStream.addEventListener(NetStatusEvent.NET_STATUS, ncStatus);
 			this.sendStream.publish("media");
-			log("3.2");
+			
 			var client:Object = new Object();
 			client.onPeerConnect = function(callerns:NetStream):Boolean {
 				log("(AS) Receive connection from " + callerns.farID);
 				return true;
 			}
-			log("3.3");
+			
 			this.sendStream.client = client;
 		}
 		
 		private function ncStatus(event:NetStatusEvent):void {
 			log(event.info.code);
 			
-			log("(AS) MyID:"+nc.nearID);
-			this.myID = nc.nearID;
-			
-			if (event.info.code == "NetConnection.Connect.Success") {
-				listen();
+			switch (event.info.code) {
+				case "NetConnection.Connect.Success":
+					log("(AS) MyID:"+nc.nearID);
+					this.myID = nc.nearID;
+					
+					listen();
+					break;
+				case "NetStream.Publish.BadName":
+					error("Please check the name of the publishing stream");
+					break;
 			}
 		}
 		
@@ -142,9 +146,10 @@ package com.h3xstream.rtmfp
 			}
 		}
 		
-		public function error(message:String,e:Error):void {
+		public function error(message:String,e:Error=null):void {
 			if (DEBUG) {
-				ExternalInterface.call("console.error","["+message+"]\nerrorID:"+e.errorID+"\nmessage:"+e.message+"\nstacktrace:"+e.getStackTrace());
+				var extra:String = e!=null?"\nerrorID:"+e.errorID+"\nmessage:"+e.message+"\nstacktrace:"+e.getStackTrace():"";
+				ExternalInterface.call("console.error","["+message+"]"+extra);
 			}
 		}
 		
