@@ -27,20 +27,30 @@ package com.h3xstream.rtmfp
 		private var myID:String;
 		
 		//Callbacks
-		private var onMessageRecvCall:String = "onMessage";
+		private var onMessageRecvCall:String = null;
+		private var onPeerIdRecvCall:String = null;
+		private var onPeerConnectCall:String = null;
+		private var onPeerDisconnectCall:String = null;
 		
 		public function Rtmfp():void {
 			try {
 				//Load flashvars parameters
 				var params:Object = this.loaderInfo.parameters;
-				if (params['DEBUG'] !== undefined)
+				if(params['DEBUG'] !== undefined)
 					DEBUG = (params['DEBUG'] == 'true');
-				if (params['rtmfpUrl'] !== undefined)
+				if(params['rtmfpUrl'] !== undefined)
 					rtmfpUrl = params['rtmfpUrl'];
-				if (params['domain'] !== undefined)
+				if(params['domain'] !== undefined)
 					domain = params['domain'];
 				
-				log("rtmfp-api version 1.0");
+				if(params['onMessageRecvCall'] !== undefined)
+					onMessageRecvCall = params['onMessageRecvCall'];
+				if(params['onPeerIdRecvCall'] !== undefined)
+					onPeerIdRecvCall = params['onPeerIdRecvCall'];
+				if(params['onPeerConnectCall'] !== undefined)
+					onPeerConnectCall = params['onPeerConnectCall'];
+				
+				log("rtmfp-api version 1.2");
 				
 				Security.allowDomain(domain);
 				initCallbacks();
@@ -69,8 +79,9 @@ package com.h3xstream.rtmfp
 			this.sendStream.publish("media");
 			
 			var client:Object = new Object();
-			client.onPeerConnect = function(callerns:NetStream):Boolean {
-				log("(AS) Receive connection from " + callerns.farID);
+			client.onPeerConnect = function(subscriber:NetStream):Boolean {
+				log("(AS) Receive connection from " + subscriber.farID);
+				onPeerConnect(subscriber.farID);
 				return true;
 			}
 			
@@ -81,14 +92,27 @@ package com.h3xstream.rtmfp
 			log(event.info.code);
 			
 			switch (event.info.code) {
-				case "NetConnection.Connect.Success":
+				case "NetConnection.Connect.Success": //Obtain ID from rtmfp server
 					log("(AS) MyID:"+nc.nearID);
 					this.myID = nc.nearID;
+					
+					jsCall(onPeerIdRecvCall,this.myID);
 					
 					listen();
 					break;
 				case "NetStream.Publish.BadName":
 					error("Please check the name of the publishing stream");
+					break;
+				
+				case "NetStream.Connect.Success": //Peer connect
+					
+					break;
+					
+				case "NetStream.Connect.Closed": //Peer disconnect
+					break;
+					
+				case "NetStream.Play.Start":
+					
 					break;
 			}
 		}
@@ -128,12 +152,18 @@ package com.h3xstream.rtmfp
 		
 		/**
 		 * Each message received is push to the browser.
-		 * @param	fromFarID
+		 * @param	peerID
 		 * @param	message
 		 * @param	channel
 		 */
-		public function onMessageRecv(fromFarID:String, message:String,channel:String):void {
-			ExternalInterface.call(onMessageRecvCall,fromFarID,message,channel);
+		public function onMessageRecv(peerID:String, message:String):void {
+			log("111111111"+onMessageRecvCall+"---"+peerID+"----"+message);
+			jsCall(onMessageRecvCall, peerID, message);
+			log("222222222");
+		}
+		
+		public function onPeerConnect(peerID:String):void {
+			jsCall(onPeerConnectCall, peerID);
 		}
 		
 		/**
@@ -142,15 +172,20 @@ package com.h3xstream.rtmfp
 		 */
 		public function log(message:String):void {
 			if (DEBUG) {
-				ExternalInterface.call("console.info",message);
+				jsCall("console.info",message);
 			}
 		}
 		
 		public function error(message:String,e:Error=null):void {
 			if (DEBUG) {
 				var extra:String = e!=null?"\nerrorID:"+e.errorID+"\nmessage:"+e.message+"\nstacktrace:"+e.getStackTrace():"";
-				ExternalInterface.call("console.error","["+message+"]"+extra);
+				jsCall("console.error","["+message+"]"+extra);
 			}
+		}
+		
+		public function jsCall(callback:String,... args):void {
+			args.unshift(callback);
+			ExternalInterface.call.apply(null, args);
 		}
 		
 		/**

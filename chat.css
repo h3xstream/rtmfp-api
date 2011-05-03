@@ -1,0 +1,86 @@
+body,html {
+	font-family: Helvetica, Geneva, Arial, sans-serif;
+	font-size: 1em;
+	font-style: normal;
+	font-weight: normal;
+	margin:0;
+	padding:0;
+	color:#000;
+	background:#E7DEDE;
+}
+
+/** Structure **/
+
+#container {
+	width:750px;
+	margin:0 auto;
+	background:#fff;
+	padding:15px;
+}
+#header {
+	padding:5px 10px;
+	background:#524A42;
+}
+
+#main {
+	float:left;
+	padding:10px;
+}
+
+#sidebar {
+	float:right;
+	width:230px;
+	margin-bottom:4px;
+	padding:10px;
+	background:#F6F9FB;
+	border:2px solid #E1E1E1;
+}
+#footer {
+	clear:both;
+	padding:5px 10px;
+	background:#948C7B;
+}
+
+/** Text **/
+
+#title, #room_title {
+	font-size:22px;
+	color:#fff;
+}
+
+#txtMessage {
+	width:350px;
+}
+
+#btnSendMessage {
+	
+}
+
+#ulListPeers {
+	margin:0px;
+}
+
+/** **/
+
+#dialogNickName {
+	position:absolute;
+	top:100px;
+	left: 40%;
+	border: 3px solid #948C7B;
+	background-color: #FFF;
+	z-index:2601;
+	
+	color:#555;
+	font-size:14px;
+}
+
+#overlay  {
+	background-color:#000000;
+	opacity:0.6;
+	height:100%;
+	left:0;
+	top:0;
+	position:absolute;
+	width:100%;
+	z-index:2600;
+}

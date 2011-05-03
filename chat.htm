@@ -1,0 +1,83 @@
+<html>
+<head>
+	<title>Chat</title>
+	
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js" type="text/javascript"></script>
+	<script src="js/swfobject.js" type="text/javascript"></script>
+	<script src="js/jquery.json-2.2.min.js" type="text/javascript"></script>
+	
+	<script type="text/javascript" src="chat.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="chat.css" />
+</head>
+<body>
+
+<a href="bin/rtmfp.swf">Reload</a>
+
+<div id="rtmfpSwf">
+  <p>Could not load swf</p>
+</div>
+
+
+<div id="container">
+<!-- START Create -->
+<div id="section_create" style="display:block">
+	<div id="header"><span id="title">Create a private chat room </span></div>
+	<br/>
+	Room name : <input type="text" id="txtRoomTitle" value=""><br/>
+	<input class="btn" type="button" value="Create" onclick="ChatActions.createRoom($('#txtRoomTitle').val())"/>
+
+</div>
+<!-- END Create -->
+
+<!-- START Chat section -->
+<div id="section_chat" style="display:none">
+
+	<div id="header"><span id="room_title">Title Room</span></div> 
+	<div id="main">
+	
+	<div id="divMessages"></div>
+	
+	</div> 
+	<div id="sidebar">
+		Users connected:<br/>
+		<ul id="ulListPeers">
+			<li>No user</li>
+		</ul>
+	</div> 
+	<div id="footer">
+	
+		<form action="">
+		<div style="float:left"><textarea id="txtMessage"></textarea></div><input id="btn btnSendMessage" type="button" value="Send"/>
+		</form>
+	
+	</div>
+
+</div>
+
+<!-- END Chat section -->
+
+<!-- START Dialog nickname -->
+<div id="overlay" style="display:none"></div>
+<div id="dialogNickName" style="display:none">
+<center><p>Choose a nickname: <input type="text" id="txtNickName" value=""/><br/>
+<input type="button" value="Select" onclick="ChatActions.changeNickName($('#txtNickName').val())"></p></center>
+</div>
+
+
+<!-- END Dialog nickname -->
+
+<!-- START Invite other people -->
+<div id="divInvite" style="display:none">
+<center>
+Invite people to this chat room:<br/>
+<input type="text" id="txtInviteUrl" size="45"/>
+</center>
+</div>
+<!-- END Invite other people -->
+
+</div>
+
+
+</body>
+</html>

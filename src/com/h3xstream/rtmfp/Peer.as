@@ -15,6 +15,12 @@ package com.h3xstream.rtmfp
 
 		private var isInit:Boolean = false;
 
+		/**
+		 * 
+		 * @param	peerID Id of the peer we will try to connect.
+		 * @param	nc Connection handle to the rtmfp server
+		 * @param	eventRecv Main class to which new events will be redirect.
+		 */
 		public function Peer (peerID:String, nc:NetConnection, eventRecv:Rtmfp) {
 			this.recvStream = new NetStream(nc, peerID);
 			this.recvStream.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
@@ -26,13 +32,18 @@ package com.h3xstream.rtmfp
 		}
 
 		public function receiveMessage(message:String):void {
-			var channel:String = "temp";
-			this.eventRecv.log("(AS) PeerID:"+this.peerID +" message:"+message +" ("+channel+")");
-			this.eventRecv.onMessageRecv(peerID, message,channel);
+			this.eventRecv.log("(AS) PeerID:"+this.peerID +" message:"+message +"");
+			this.eventRecv.onMessageRecv(peerID, message);
 		}
 
 		private function netStatusHandler(event:NetStatusEvent):void{
-			this.eventRecv.log("(AS) PeerID:"+this.peerID+" Status:" + event.info.code);
+			this.eventRecv.log("(AS) PeerID:" + this.peerID + " Status:" + event.info.code);
+			
+			switch (event.info.code) {
+				case "NetStream.Play.Start": //Peer is now ready to receive message
+					this.eventRecv.onPeerConnect(this.peerID );
+					break;
+			}
 		}
 	}
 
