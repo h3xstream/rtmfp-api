@@ -49,8 +49,10 @@ package com.h3xstream.rtmfp
 					onPeerIdRecvCall = params['onPeerIdRecvCall'];
 				if(params['onPeerConnectCall'] !== undefined)
 					onPeerConnectCall = params['onPeerConnectCall'];
+				if(params['onPeerDisconnectCall'] !== undefined)
+					onPeerDisconnectCall = params['onPeerDisconnectCall'];
 				
-				log("rtmfp-api version 1.2");
+				log("rtmfp-api version 1.0");
 				
 				Security.allowDomain(domain);
 				initCallbacks();
@@ -157,9 +159,7 @@ package com.h3xstream.rtmfp
 		 * @param	channel
 		 */
 		public function onMessageRecv(peerID:String, message:String):void {
-			log("111111111"+onMessageRecvCall+"---"+peerID+"----"+message);
 			jsCall(onMessageRecvCall, peerID, message);
-			log("222222222");
 		}
 		
 		public function onPeerConnect(peerID:String):void {
@@ -183,7 +183,7 @@ package com.h3xstream.rtmfp
 			}
 		}
 		
-		public function jsCall(callback:String,... args):void {
+		public function jsCall(callback:String, ... args):void { //DO NOT use logging in this method
 			args.unshift(callback);
 			ExternalInterface.call.apply(null, args);
 		}
