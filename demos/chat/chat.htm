@@ -1,0 +1,82 @@
+<html>
+<head>
+	<title>Chat</title>
+	
+	<!-- Dependencies -->
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
+	<script type="text/javascript" src="../common-js/swfobject.js"></script>
+	<script type="text/javascript" src="../common-js/jquery.json-2.2.min.js"></script>
+	<!-- The js wrapper -->
+	<script type="text/javascript" src="../common-js/rtmfp.js"></script>
+	<!-- Code for the chat demo -->
+	<script type="text/javascript" src="chat.js"></script>
+	
+	<link rel="stylesheet" type="text/css" href="chat.css" />
+</head>
+<body>
+
+<div id="container">
+<!-- START Create -->
+<div id="section_create" style="display:block">
+	<div id="header"><span id="title">Create a private chat room </span></div>
+	<br/>
+	Room name : <input type="text" id="txtRoomTitle" value=""><br/>
+	<input class="btn" type="button" value="Create" onclick="ChatActions.createRoom($('#txtRoomTitle').val())"/>
+
+</div>
+<!-- END Create -->
+
+<!-- START Chat section -->
+<div id="section_chat" style="display:none">
+	<div id="header"><span id="room_title">Title Room</span></div> 
+	<div id="main">
+		<div id="sidebar">
+			Users connected:<br/>
+			<ul id="ulListPeers">
+				<li>No user</li>
+			</ul>
+		</div>
+		<div id="divMessages"><!-- Messages are shown here. --></div>
+	
+	</div>
+	
+	<div id="footer">
+		<form action="" style="margin:0px;padding:0px">
+		<div style="float:left"><textarea id="txtMessage"></textarea></div>
+		<input id="btnSendMessage" type="button" value="Send" onclick="ChatActions.sendMessage($('#txtMessage').val());$('#txtMessage').val('')"/>
+		</form>
+	</div>
+</div>
+<!-- END Chat section -->
+
+<!-- START Invite other people -->
+<div id="divInvite" style="display:none">
+<br/>
+<center>
+<span id="txtInvite">Invite people to this chat room:</span><br/>
+<input type="text" id="txtInviteUrl" onclick="this.focus();this.select()"/>
+</center>
+</div>
+<!-- END Invite other people -->
+
+</div>
+
+
+<div id="overlay" style="display:none"></div>
+
+<!-- START Dialog nickname -->
+<div id="divDialogNickName" class="dialog" style="display:none">
+<center><p>Choose a nickname: <input type="text" id="txtNickName" value=""/><br/>
+<input type="button" value="Select" onclick="ChatActions.changeNickName($('#txtNickName').val())"></p></center>
+</div>
+<!-- END Dialog nickname -->
+
+<div id="divDialogConnect" class="dialog" style="display:none">
+<center><p>
+<b>Connecting...</b><br/>
+(Should take few seconds)
+</p></center>
+</div>
+
+</body>
+</html>
