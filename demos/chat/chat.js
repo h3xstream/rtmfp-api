@@ -24,7 +24,7 @@ function initialiseRtmfp() {
 		onPeerConnectCall:   'ChatEvents.onRtmfpPeerConnect',
 		onPeerDisconnectCall:'ChatEvents.onRtmfpPeerDisonnect'};
 	
-	rtmfp = new Rtmfp("../../bin/rtmfp.swf",config);
+	rtmfp = new Rtmfp("../rtmfp.swf",config);
 }
 
 /**
