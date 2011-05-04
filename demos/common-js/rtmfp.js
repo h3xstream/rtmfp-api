@@ -1,6 +1,5 @@
 /**
- * Depends on those js libs:
- * 
+ * Wrapper use to communicate with the hidden flash applet.
  */
 Rtmfp = function(pathSwf,config) {
 	var pub = {};
