@@ -18,7 +18,6 @@ Rtmfp = function(pathSwf,config) {
 			function (res) {
 				if(res.success) {
 					refSwfObject = document.getElementById(idSwfObject);
-					console.info("testaaaaaaaaa"+refSwfObject);
 				}
 			});
 	}
@@ -28,7 +27,6 @@ Rtmfp = function(pathSwf,config) {
 	}
 	
 	pub.send = function(command,parameters) {
-		console.info("sendimng"+command);
 		refSwfObject.send(command+"|"+$.toJSON(parameters));
 	}
 	
