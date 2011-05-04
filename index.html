@@ -1,1 +1,120 @@
-<h1>Hello World!!!</h1>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+ "http://www.w3.org/TR/html4/strict.dtd">
+ 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> 
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
+	<title>Rtmfp API</title>
+	
+	<script type="text/javascript" src="http://alexgorbatchev.com.s3.amazonaws.com/pub/sh/3.0.83/scripts/shCore.js"></script>
+	<script type="text/javascript" src="http://alexgorbatchev.com.s3.amazonaws.com/pub/sh/3.0.83/scripts/shBrushJScript.js"></script>
+	<link type="text/css" rel="stylesheet" href="http://alexgorbatchev.com.s3.amazonaws.com/pub/sh/3.0.83/styles/shCoreDefault.css"/>
+	<link type="text/css" rel="stylesheet" href="http://alexgorbatchev.com.s3.amazonaws.com/pub/sh/3.0.83/styles/shThemeEclipse.css"/>
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	
+	<link rel='stylesheet' type='text/css' href='gh-pages/styles.css'/> 
+	
+</head>
+<body> 
+<div id="main"> 
+    <div id="header">
+    
+    <h1>Rtmfp API</h1>&nbsp;&nbsp;<span id="subtitle">P2P for all..</span>
+    </div>
+    
+    <div id="content">
+    
+    <a name="what"><h2>What is it?</h2></a>
+    <p>This project expose Rtmfp protocol (provided by Flash version 10) to javascript application throught a hidden flash applet.
+    The protocol allow multiple clients to communicate <b>directly</b>. See the <a href="#refs">references</a> for more details about the protocol.</p>
+    <p>Possible uses include:
+    <ul>
+    	<li>Game</li>
+    	<li>Real-time communication</li>
+    	<li>High bandwith communication</li>
+    	<li>Chat application</li>
+    </ul></p>
+    
+    <a name="use"><h2>How to use it</h2></a>
+    <p>
+    Initialisation:
+    <pre class="brush: js;">
+    var config = {
+		DEBUG:false, //Internal of the Flash will be output to console.info
+		rtmfpUrl:'rtmfp://p2p.rtmfp.net/API_KEY', //Rtmfp server
+		domain:'*', 
+		//Name of the method to handle the various events
+		onPeerIdRecvCall:    'onRtmfpPeerIdRecv', 
+		onMessageRecvCall:   'onRtmfpMessageRecv',
+		onPeerConnectCall:   'onRtmfpPeerConnect',
+		onPeerDisconnectCall:'onRtmfpPeerDisonnect'};
+	
+	rtmfp = new Rtmfp("../../bin/rtmfp.swf",config);
+    </pre>
+    
+    Define the differents callbacks:
+    <pre class="brush: js;">
+    onRtmfpPeerIdRecv = function(peerId) {
+	    ...
+    }
+    onRtmfpMessageRecv = function(peerId,message) {
+	    ...
+    }
+    pub.onRtmfpPeerConnect = function(peerId) {
+	    ...
+    }
+    onRtmfpPeerDisconnect = function(peerId) {
+	    ...
+    }
+    </pre>
+    </p>
+    
+    Use the main instance (Rtmfp object) to connect to peer and send message.
+    <pre class="brush: js;">
+     //Once connected you will receive message send by this peer
+    rtmfp.connectToPeer("6487b[...]");
+    
+    //Publish message to all connected peers
+    rtmfp.send("test");
+    </pre>
+    
+    <a name="demos"><h2>Demos</h2></a>
+    <p>
+    <ul>
+    	<li><a href="demos/chat/">Chat</a></li>
+    </ul>
+    </p>
+    
+    <a name="todo"><h2>Missing features (todos)</h2></a>
+    <p>
+    <ul>
+    	<li>Complete the disconnect event callback</li>
+    	<li>Interface to allow the connection of a restricted list of peerId</li>
+    	<li>Wrapper for Java Applet/Silverlight</li>
+    </ul>
+    </p>
+    
+    <a name="refs"><h2>References</h2></a>
+    <b>Rtmfp documentation</b><br/>
+    <ul>
+    <li><a href="http://labs.adobe.com/technologies/cirrus/">Adobe website (include a link to register for api key)</a></li>
+    <li><a href="http://tv.adobe.com/watch/max-2008-develop/future-of-communication-with-rtmfp-by-matthew-kaufman/">Future of communication with RTMFP by Matthew Kaufman</a></li>
+    <li><a href="http://tv.adobe.com/watch/max-2009-develop/p2p-on-the-flash-platform-with-rtmfp/">P2P on the Flash Platform with RTMFP</a></li>
+    </ul>
+    <br/><b>If you want to modify the flash applet</b><br/>
+    <ul>
+    <li><a href="http://livedocs.adobe.com/flash/9.0/ActionScriptLangRefV3/flash/net/NetStream.html">NetStream reference documentation</a></li>
+    </ul>
+    <br/><b>Javascript library use</b><br/>
+    <ul>
+    <li><a href="http://jquery.com/">JQuery</a></li>
+    <li><a href="http://code.google.com/p/jquery-json/">JQuery-json</a></li>
+    <li><a href="http://code.google.com/p/swfobject/">Swfobject</a></li>
+    </ul>
+    
+    </div>
+    
+    <div id="footer">
+    <a href="#">back to top</a> | Project started by <a href="https://github.com/h3xstream">h3xStream</a> and <a href="https://github.com/HoLyVieR">HoLyVieR</a>
+    </div>
+</div> 
