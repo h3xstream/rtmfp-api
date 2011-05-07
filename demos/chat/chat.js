@@ -16,15 +16,15 @@ $(document).ready(function() {
 
 function initialiseRtmfp() {
 	var config = {
-		DEBUG:false,
+		DEBUG:true,
 		rtmfpUrl:'rtmfp://p2p.rtmfp.net/f305c7dae01d5c4767797222-af55b81ce685',
 		domain:'*',
 		onMessageRecvCall:   'ChatEvents.onRtmfpMessageRecv',
 		onPeerIdRecvCall:    'ChatEvents.onRtmfpPeerIdRecv',
 		onPeerConnectCall:   'ChatEvents.onRtmfpPeerConnect',
-		onPeerDisconnectCall:'ChatEvents.onRtmfpPeerDisonnect'};
+		onPeerDisconnectCall:'ChatEvents.onRtmfpPeerDisconnect'};
 	
-	rtmfp = new Rtmfp("../rtmfp.swf",config);
+	rtmfp = new Rtmfp("../../bin/rtmfp.swf",config);
 }
 
 /**
@@ -45,6 +45,16 @@ ChatState = function () {
 	pub.addUser = function(user) {
 		if(pub.getUserByPeerId(user.peerId) == null) {
 			ChatState.listUsers.push(user);
+		}
+	}
+	
+	pub.removeUser = function(peerId) {
+		var users = ChatState.listUsers;
+		for(var u in users) {
+			if(users[u].peerId == peerId) {
+				users.splice (u,1);
+				return;
+			}
 		}
 	}
 	
@@ -227,7 +237,15 @@ ChatEvents = function () {
 	}
 	
 	pub.onRtmfpPeerDisconnect = function(peerId) {
-		
+		if(ChatState.isChatOwner) {
+			ChatState.removeUser(peerId);
+			
+			ChatUI.updateListUsers();
+			ChatActions.sendListUsers();
+		}
+		else {
+			//Lost communication with the room owner
+		}
 	}
 	
 	return pub;
