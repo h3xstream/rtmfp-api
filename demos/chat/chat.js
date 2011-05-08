@@ -3,7 +3,7 @@ var url_params = loadQueryParams();
 var rtmfp = null;
 
 /**
- * 
+ * On document load
  */
 $(document).ready(function() {
 	initialiseRtmfp();
@@ -16,15 +16,16 @@ $(document).ready(function() {
 
 function initialiseRtmfp() {
 	var config = {
-		DEBUG:true,
-		rtmfpUrl:'rtmfp://p2p.rtmfp.net/f305c7dae01d5c4767797222-af55b81ce685',
-		domain:'*',
-		onMessageRecvCall:   'ChatEvents.onRtmfpMessageRecv',
-		onPeerIdRecvCall:    'ChatEvents.onRtmfpPeerIdRecv',
-		onPeerConnectCall:   'ChatEvents.onRtmfpPeerConnect',
-		onPeerDisconnectCall:'ChatEvents.onRtmfpPeerDisconnect'};
+		DEBUG:false,
+		rtmfpUrl:'rtmfp://p2p.rtmfp.net/f305c7dae01d5c4767797222-af55b81ce685'};
 	
-	rtmfp = new Rtmfp("../../bin/rtmfp.swf",config);
+	var callbacks = {
+		onMessageRecvCall:    ChatEvents.onRtmfpMessageRecv,
+		onPeerIdRecvCall:     ChatEvents.onRtmfpPeerIdRecv,
+		onPeerConnectCall:    ChatEvents.onRtmfpPeerConnect,
+		onPeerDisconnectCall: ChatEvents.onRtmfpPeerDisconnect};
+	
+	rtmfp = new Rtmfp("../rtmfp.swf",config,callbacks);
 }
 
 /**
@@ -174,11 +175,8 @@ ChatActions = function () {
 ChatEvents = function () {
 	var pub = {};
 	
-	pub.onRtmfpMessageRecv = function(peerId,message) {
-		var idx = message.indexOf("|");
+	pub.onRtmfpMessageRecv = function(peerId,cmd,data) {
 		
-		var cmd = message.slice(0,idx);
-		var data = $.evalJSON(message.slice(idx+1));
 		
 		//console.info("(JS) New message [cmd]="+cmd+" [data]="+data);
 		
@@ -222,8 +220,8 @@ ChatEvents = function () {
 	}
 	
 	pub.onRtmfpPeerConnect = function(peerId) {
-		//Make sure connection is established
 		if(ChatState.isChatOwner) {
+			//Established the other way
 			rtmfp.connectToPeer(peerId);
 			
 			var u = new User("Guest",peerId);
@@ -232,8 +230,9 @@ ChatEvents = function () {
 			ChatActions.sendRoomTitle();
 		}
 		else {
-			
 		}
+		
+		return true;
 	}
 	
 	pub.onRtmfpPeerDisconnect = function(peerId) {

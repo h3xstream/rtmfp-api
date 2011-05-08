@@ -41,41 +41,47 @@
     <pre class="brush: js;">
     var config = {
 		DEBUG:false, //Internal of the Flash will be output to console.info
-		rtmfpUrl:'rtmfp://p2p.rtmfp.net/API_KEY', //Rtmfp server
-		domain:'*', 
-		//Name of the method to handle the various events
-		onPeerIdRecvCall:    'onRtmfpPeerIdRecv', 
-		onMessageRecvCall:   'onRtmfpMessageRecv',
-		onPeerConnectCall:   'onRtmfpPeerConnect',
-		onPeerDisconnectCall:'onRtmfpPeerDisonnect'};
+		rtmfpUrl:'rtmfp://p2p.rtmfp.net/API_KEY'}; //Rtmfp server
+	
+	//Functions to handle the various events
+	var callbacks = {
+		onPeerIdRecvCall:     onPeerIdRecv, 
+		onMessageRecvCall:    onMessageRecv,
+		onPeerConnectCall:    onPeerConnect,
+		onPeerDisconnectCall: onPeerDisonnect};
 	
 	rtmfp = new Rtmfp("../../bin/rtmfp.swf",config);
     </pre>
     
     Define the different callbacks:
     <pre class="brush: js;">
-    onRtmfpPeerIdRecv = function(peerId) {
+    onPeerIdRecv = function(peerId) {
 	    ...
     }
-    onRtmfpMessageRecv = function(peerId,message) {
+    onMessageRecv = function(peerId,cmd,object) {
 	    ...
     }
-    pub.onRtmfpPeerConnect = function(peerId) {
+    onPeerConnect = function(peerId) {
 	    ...
+	    return true; //If the incomming connection is accept
     }
-    onRtmfpPeerDisconnect = function(peerId) {
+    onPeerDisconnect = function(peerId) {
 	    ...
     }
     </pre>
     </p>
     
     Use the main instance (Rtmfp object) to connect to peer and send message.
+    The main principe of Rtmfp communication is that you can only send message
+    to those who are <b>connected to you</b>.
     <pre class="brush: js;">
      //Once connected you will receive message send by this peer
     rtmfp.connectToPeer("6487b[...]");
     
     //Publish message to all connected peers
-    rtmfp.send("test");
+    //The data passed can be any serializable js object
+    rtmfp.send("NICKNAME","bob");
+    rtmfp.send("LIST_ITEMS",["1","2","3","4"]);
     </pre>
     
     <a name="demos"><h2>Demos</h2></a>
@@ -88,8 +94,6 @@
     <a name="todo"><h2>Missing features (todos)</h2></a>
     <p>
     <ul>
-    	<li>Complete the disconnect event callback</li>
-    	<li>Restricted list of peerId allow to connect</li>
     	<li>Wrapper for Java Applet/Silverlight</li>
     </ul>
     </p>

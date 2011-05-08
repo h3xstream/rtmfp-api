@@ -30,8 +30,10 @@ package com.h3xstream.rtmfp
 		
 		private var peers:Dictionary = new Dictionary();
 		private var myID:String;
+		
 		private var timerWaitForProbeResp:Timer;
 		private var timerStarted:Boolean = false;
+		private var timerDelay:int = 2000;
 		
 		//Callbacks
 		private var onMessageRecvCall:String = null;
@@ -47,8 +49,6 @@ package com.h3xstream.rtmfp
 					DEBUG = (params['DEBUG'] == 'true');
 				if(params['rtmfpUrl'] !== undefined)
 					rtmfpUrl = params['rtmfpUrl'];
-				if(params['domain'] !== undefined)
-					domain = params['domain'];
 				
 				if(params['onMessageRecvCall'] !== undefined)
 					onMessageRecvCall = params['onMessageRecvCall'];
@@ -59,14 +59,13 @@ package com.h3xstream.rtmfp
 				if(params['onPeerDisconnectCall'] !== undefined)
 					onPeerDisconnectCall = params['onPeerDisconnectCall'];
 				
-				log("rtmfp-api version 1.2");
+				log("rtmfp-api version 1.0");
 				
 				Security.allowDomain(domain);
 				initCallbacks();
 				initRTMFP(rtmfpUrl);
 				
-				
-				timerWaitForProbeResp = new Timer(5000, 1); // 10 second
+				timerWaitForProbeResp = new Timer(timerDelay, 1);
 				timerWaitForProbeResp.addEventListener(TimerEvent.TIMER, cleanUpPeerList);
 			}
 			catch (e:Error) {
@@ -88,21 +87,24 @@ package com.h3xstream.rtmfp
 		
 		private function listen():void {
 			this.sendStream = new NetStream(nc, NetStream.DIRECT_CONNECTIONS);
-			this.sendStream.addEventListener(NetStatusEvent.NET_STATUS, publishNetStreamStatus);
+			this.sendStream.addEventListener(NetStatusEvent.NET_STATUS, netConnectionStatus);
 			this.sendStream.publish("media");
 			
 			var client:Object = new Object();
 			client.onPeerConnect = function(subscriber:NetStream):Boolean {
 				log("(AS) Receive connection from " + subscriber.farID);
-				onPeerConnect(subscriber.farID);
-				return true;
+				var resp:Boolean = onPeerConnect(subscriber.farID);
+				
+				
+				return resp;
 			}
 			
 			this.sendStream.client = client;
 		}
 		
 		/**
-		 * @param event Event related to the connection with rtmfp server.
+		 * @param event Event related to the connection with rtmfp server (initRTMFP method)
+		 *   and related with the stream use to send messages to others (listen method)
 		 */
 		private function netConnectionStatus(event:NetStatusEvent):void {
 			
@@ -126,39 +128,26 @@ package com.h3xstream.rtmfp
 					if (timerStarted == false) {
 						timerStarted = true;
 						//Set every peer to disconnect
-						log("1");
 						for (var p:String in peers) {
 							peers[p].connected = false;
 						}
 						//Send the probe
 						sendStream.send("receiveProbeRequest");
-						log("2");
 						//Wait
 						timerWaitForProbeResp.start();
-						
-						log("3");
 					}
 					
 					break;
-			}
-		}
-		
-		/**
-		 * @param	event Event related with the stream use to send messages to others.
-		 */
-		private function publishNetStreamStatus(event:NetStatusEvent):void {
-			
-			log("NS code="+event.info.code);
-			
-			switch (event.info.code) {
+					
 				case "NetStream.Publish.BadName":
 					error("Please check the name of the publishing stream");
 					break;
 			}
 		}
 		
+		
 		public function onProbeRequest():void {
-			log("Receive probe ...and replying")
+			//log("Receive probe ...and replying")
 			sendStream.send("receiveProbeResponse");
 		}
 		
@@ -175,18 +164,16 @@ package com.h3xstream.rtmfp
 		}
 		
 		private function cleanUpPeerList(event:TimerEvent):void {
-			log("4");
 			for (var p:String in peers) {
 				if (peers[p].connected == false) {
-					log("Probe not receive for the peer:" + peers[p].peerID);
+					//Probe not receive for this peer
 					onPeerDisconnect(peers[p].peerID);
 				}
 				else {
-					log("Probe receive for the peer:" + peers[p].peerID);
+					//Probe receive for this peer
 				}
 			}
-			log("5");
-			timerStarted = true;
+			timerStarted = false;
 		}
 		
 		/**
@@ -194,6 +181,7 @@ package com.h3xstream.rtmfp
 		 * @param peerID Establish a connection with the peer
 		 */
 		public function connectToPeer(peerID:String):void {
+			log("Connecting to "+peerID);
 			this.getPeer(peerID);
 		}
 		
@@ -223,14 +211,17 @@ package com.h3xstream.rtmfp
 			jsCall(onMessageRecvCall, peerID, message);
 		}
 		
-		public function onPeerConnect(peerID:String):void {
-			jsCall(onPeerConnectCall, peerID);
+		public function onPeerConnect(peerID:String):* {
+			var resp:* = jsCall(onPeerConnectCall, peerID);
+			if (resp is Boolean) {
+				log("Incoming connection from ["+peerID+"] "+(resp?"accepted":"refused"));
+				return resp;
+			}
+			return true;
 		}
 		
 		public function onPeerDisconnect(peerID:String):void {
-			log("111");
 			jsCall(onPeerDisconnectCall, peerID);
-			log("222");
 		}
 		
 		/**
@@ -250,9 +241,12 @@ package com.h3xstream.rtmfp
 			}
 		}
 		
-		public function jsCall(callback:String, ... args):void { //DO NOT use logging in this method
+		public function jsCall(callback:String, ... args):* { //DO NOT use logging in this method
+			for (var arg:String in args) {
+				arg = escapeFix(arg);
+			}
 			args.unshift(callback);
-			ExternalInterface.call.apply(null, args);
+			return ExternalInterface.call.apply(null, args);
 		}
 		
 		/**
