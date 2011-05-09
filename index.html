@@ -27,20 +27,20 @@
     <a name="what"><h2>What is it?</h2></a>
     <p>This project expose Rtmfp protocol (provided by Flash version 10) to javascript application throught a hidden flash applet.
     The protocol allow multiple clients to communicate <b>directly</b>. See the <a href="#refs">references</a> for more details about the protocol.</p>
-    <p>Possible uses include:
+    <p>Possible uses include:</p>
     <ul>
     	<li>Game</li>
     	<li>Real-time communication</li>
     	<li>High bandwith communication</li>
     	<li>Chat application</li>
-    </ul></p>
+    </ul>
     
     <a name="use"><h2>How to use it</h2></a>
     <p>
-    Initialisation:
+    Initialisation:</p>
     <pre class="brush: js;">
     var config = {
-		DEBUG:false, //Internal of the Flash will be output to console.info
+		DEBUG:false, //Internal debug of the Flash applet will be output to console.info
 		rtmfpUrl:'rtmfp://p2p.rtmfp.net/API_KEY'}; //Rtmfp server
 	
 	//Functions to handle the various events
@@ -53,7 +53,7 @@
 	rtmfp = new Rtmfp("../../bin/rtmfp.swf",config);
     </pre>
     
-    Define the different callbacks:
+    <p>Define the different callbacks:</p>
     <pre class="brush: js;">
     onPeerIdRecv = function(peerId) {
 	    ...
@@ -63,19 +63,18 @@
     }
     onPeerConnect = function(peerId) {
 	    ...
-	    return true; //If the incomming connection is accept
+	    return true; //If the incoming connection is accept
     }
     onPeerDisconnect = function(peerId) {
 	    ...
     }
     </pre>
-    </p>
     
-    Use the main instance (Rtmfp object) to connect to peer and send message.
+    <p>Use the main instance (Rtmfp object) to connect to peer and send message.
     The main principe of Rtmfp communication is that you can only send message
-    to those who are <b>connected to you</b>.
+    to those who are <b>connected to you</b>.</p>
     <pre class="brush: js;">
-     //Once connected you will receive message send by this peer
+     //Once connected messages can be _received_ from this peer
     rtmfp.connectToPeer("6487b[...]");
     
     //Publish message to all connected peers
@@ -85,18 +84,16 @@
     </pre>
     
     <a name="demos"><h2>Demos</h2></a>
-    <p>
+
     <ul>
     	<li><a href="demos/chat/">Chat</a></li>
     </ul>
-    </p>
     
     <a name="todo"><h2>Missing features (todos)</h2></a>
-    <p>
+    
     <ul>
     	<li>Wrapper for Java Applet/Silverlight</li>
     </ul>
-    </p>
     
     <a name="refs"><h2>References</h2></a>
     <b>Rtmfp documentation</b><br/>
@@ -105,11 +102,11 @@
     <li><a href="http://tv.adobe.com/watch/max-2008-develop/future-of-communication-with-rtmfp-by-matthew-kaufman/">Future of communication with RTMFP by Matthew Kaufman</a></li>
     <li><a href="http://tv.adobe.com/watch/max-2009-develop/p2p-on-the-flash-platform-with-rtmfp/">P2P on the Flash Platform with RTMFP</a></li>
     </ul>
-    <br/><b>If you want to modify the flash applet...</b><br/>
+    <b>If you want to modify the flash applet...</b><br/>
     <ul>
     <li><a href="http://livedocs.adobe.com/flash/9.0/ActionScriptLangRefV3/flash/net/NetStream.html">NetStream reference documentation</a></li>
     </ul>
-    <br/><b>Javascript libraries use</b><br/>
+    <b>Javascript libraries use</b><br/>
     <ul>
     <li><a href="http://jquery.com/">JQuery</a></li>
     <li><a href="http://code.google.com/p/jquery-json/">JQuery-json</a></li>

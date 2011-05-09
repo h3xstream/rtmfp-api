@@ -49,9 +49,6 @@ body {
 	border-top-right-radius: 10px 5px;
 }
 
-ul {
-	margin-left:20px;
-}
 
 a {
   color: #333;
@@ -79,6 +76,19 @@ h2 {
 	margin-top: 15px;
 }
 
+p, ul {
+  padding: 0 0 4px 10px;
+  line-height: 17px;
+  font-family: verdana, arial, sans-serif;
+  font-size: 12px;
+}
+
+ul {
+	margin-left:20px;
+}
+
+
+/** Code section **/
 .syntaxhighlighter,.line  {
 	border: 1px solid #aaa;
 	font-size:12px !important;
