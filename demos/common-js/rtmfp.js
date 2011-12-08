@@ -51,7 +51,7 @@ Rtmfp = function(pathSwf,config,callbacks) {
 		refSwfObject.send(command+"|"+data);
 	}
 	
-	init()
+	init();
 	
 	return pub;
 }
